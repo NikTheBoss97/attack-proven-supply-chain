@@ -249,9 +249,9 @@ assumption number.
 - **AS14.** D for downloads: if a source is down, the build fails. There is no
   fallback source.
 - **AS15.** I between the harness and the cluster: the harness talks to the API
-  server over TLS with the cluster's own certificate authority. Unverified: kind
-  publishes the API server only on the host's loopback address, and NodePorts only on
-  kind's Docker network.
+  server over TLS with the cluster's own certificate authority. Measured on
+  2026-11-06: kind publishes only the API server's port, on the host's loopback
+  address, so a NodePort is reachable only from kind's Docker network.
 - **AS16.** T and I between the API and PostgreSQL: the traffic is not encrypted, but
   reading it needs a position inside the cluster that already reaches the database
   (T-CLUSTER-4).
