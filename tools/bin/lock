@@ -1,0 +1,17 @@
+#!/bin/sh
+# Author: Nicola Antonello
+#
+# Regenerates every requirements.txt that has a requirements.in beside it, with
+# a hash for every package and wheels only (ADR-0008). Run it in the toolbox:
+#   tools/run.sh lock
+set -eu
+
+cd "$(dirname "$0")/../.."
+
+# Each requirements.in comes before the files that constrain on it, such as
+# app/requirements-test.in, which reads app/requirements.txt.
+for file in $(git ls-files --cached --others --exclude-standard '*requirements.in') \
+            $(git ls-files --cached --others --exclude-standard '*requirements-*.in'); do
+  pip-compile --quiet --generate-hashes --allow-unsafe --strip-extras \
+    --pip-args "--only-binary :all:" "$file"
+done

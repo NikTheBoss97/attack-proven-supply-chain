@@ -1,0 +1,9 @@
+# Author: Nicola Antonello
+#
+# The toolbox's Python tools (ADR-0009). `tools/run.sh lock` compiles this file
+# into requirements.txt, with a hash for every package.
+httpx
+pip-tools
+pytest
+ruff
+zizmor
