@@ -5,5 +5,12 @@
 [tool.ruff]
 target-version = "py314"
 
+[tool.ruff.lint]
+# EXE002 judges a file by its executable bit. Docker Desktop's mounts, on Windows
+# and in WSL, report every file as executable, so it flags every Python file
+# there; ruff itself does not enforce it on Windows or WSL. Git records the real
+# mode. Review by 2027-05-01.
+ignore = ["EXE002"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
