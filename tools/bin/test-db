@@ -1,0 +1,9 @@
+#!/bin/sh
+# Author: Nicola Antonello
+#
+# Tests the database image against a fresh database (ADR-0010):
+#   tools/run.sh test-db
+set -eu
+
+cd "$(dirname "$0")/../.."
+exec with-db pytest db/tests

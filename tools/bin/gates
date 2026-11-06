@@ -42,3 +42,6 @@ done
 step "ruff: Python lint and format"
 ruff check .
 ruff format --check .
+
+step "database: the image and its roles"
+test-db
