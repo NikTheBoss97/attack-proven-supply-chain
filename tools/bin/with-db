@@ -1,0 +1,53 @@
+#!/bin/sh
+# Author: Nicola Antonello
+#
+# Runs a command next to a fresh database built from db/ (ADR-0010):
+#   with-db <command> [args...]
+# The database runs in its own container, on its own Docker network, with
+# passwords made for this run, and both are removed afterwards, whatever the
+# outcome. The command gets DB_CONTAINER, DB_NETWORK, DB_IMAGE and
+# BOOKMARKS_API_PASSWORD.
+set -eu
+
+cd "$(dirname "$0")/../.."
+
+token() { python -c "import secrets; print(secrets.$1)"; }
+
+run=$(token 'token_hex(4)')
+DB_IMAGE=apsc-db:test
+DB_CONTAINER="apsc-db-$run"
+DB_NETWORK="apsc-db-$run"
+BOOKMARKS_API_PASSWORD=$(token 'token_urlsafe(24)')
+POSTGRES_PASSWORD=$(token 'token_urlsafe(24)')
+export DB_IMAGE DB_CONTAINER DB_NETWORK BOOKMARKS_API_PASSWORD POSTGRES_PASSWORD
+
+cleanup() {
+  docker rm --force "$DB_CONTAINER" >/dev/null 2>&1 || true
+  docker network rm "$DB_NETWORK" >/dev/null 2>&1 || true
+}
+trap cleanup EXIT
+trap 'exit 130' INT TERM
+
+docker build --quiet --tag "$DB_IMAGE" db >/dev/null
+docker network create "$DB_NETWORK" >/dev/null
+# The passwords reach the container through the environment, never the arguments.
+docker run --detach --name "$DB_CONTAINER" --network "$DB_NETWORK" \
+  --read-only --tmpfs /var/run/postgresql --tmpfs /tmp \
+  --mount type=tmpfs,destination=/var/lib/postgresql \
+  --env POSTGRES_DB=bookmarks --env POSTGRES_PASSWORD --env BOOKMARKS_API_PASSWORD \
+  "$DB_IMAGE" >/dev/null
+unset POSTGRES_PASSWORD
+
+# Setup runs on a socket only; TCP answers once the real server has started.
+waited=0
+until docker exec "$DB_CONTAINER" pg_isready -h 127.0.0.1 -d bookmarks >/dev/null 2>&1; do
+  waited=$((waited + 1))
+  if [ "$waited" -ge 60 ]; then
+    echo "with-db: the database was not ready after 60 s" >&2
+    docker logs "$DB_CONTAINER" >&2
+    exit 1
+  fi
+  sleep 1
+done
+
+"$@"
