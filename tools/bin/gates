@@ -1,0 +1,44 @@
+#!/bin/sh
+# Author: Nicola Antonello
+#
+# The quality gates (ADR-0009). Run them before every commit, in the toolbox:
+#   tools/run.sh gates
+# They run in order and stop at the first failure. CI runs the same command.
+set -eu
+
+cd "$(dirname "$0")/../.."
+
+step() { printf '\n== %s\n' "$*"; }
+
+# Tracked and new files, never ignored ones. Each list is captured first, so a
+# failing git command stops the gates instead of leaving nothing to check.
+files() { git ls-files --cached --others --exclude-standard "$@"; }
+
+step "gitleaks: the history, then the staged changes"
+gitleaks git --redact --no-banner .
+gitleaks git --pre-commit --staged --redact --no-banner .
+
+# Both tools fail when there is no workflow at all, so they run once one exists.
+workflows=$(files '.github/workflows/*')
+
+step "actionlint: workflows"
+[ -z "$workflows" ] || actionlint
+
+step "zizmor: workflow security, offline"
+[ -z "$workflows" ] || zizmor --offline .github/workflows
+
+step "hadolint: Dockerfiles"
+dockerfiles=$(files '*Dockerfile')
+for file in $dockerfiles; do
+  hadolint "$file"
+done
+
+step "shellcheck: shell scripts"
+scripts=$(files tools/run.sh 'tools/bin/*' '*.sh')
+for file in $scripts; do
+  shellcheck "$file"
+done
+
+step "ruff: Python lint and format"
+ruff check .
+ruff format --check .
