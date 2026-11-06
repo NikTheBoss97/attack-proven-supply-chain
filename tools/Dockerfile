@@ -52,5 +52,7 @@ RUN pip install --no-cache-dir --root-user-action=ignore --disable-pip-version-c
       --require-hashes --only-binary :all: -r /tmp/requirements.txt \
  && rm /tmp/requirements.txt \
  && git config --system --add safe.directory /work
-ENV PATH=/work/tools/bin:$PATH
+# Python leaves no __pycache__ directories in the mounted repository.
+ENV PATH=/work/tools/bin:$PATH \
+    PYTHONDONTWRITEBYTECODE=1
 WORKDIR /work
