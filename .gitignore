@@ -1,0 +1,30 @@
+# Author: Nicola Antonello
+
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+kubeconfig
+*.kubeconfig
+
+# Terraform: state and plans hold secrets in plain text, variable files can too.
+# .terraform.lock.hcl stays tracked: it pins provider checksums.
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+crash.log
+crash.*.log
+
+# Claude Code project instructions and tooling, kept local
+CLAUDE.md
+.claude/
+
+# Personal study list of academic sources, kept local
+docs/THEORY.md

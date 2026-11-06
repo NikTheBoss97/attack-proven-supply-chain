@@ -1,0 +1,5 @@
+# Author: Nicola Antonello
+
+# Force LF everywhere. Scripts and manifests run on Linux in CI and in containers,
+# where a CRLF checkout from Windows breaks shebangs and changes file hashes.
+* text=auto eol=lf
