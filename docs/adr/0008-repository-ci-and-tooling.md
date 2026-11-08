@@ -111,3 +111,14 @@ When CI runs:
 - pip-tools documentation, [pip-tools](https://pip-tools.pypa.io/en/stable/).
 - pip documentation, [`pip lock`](https://pip.pypa.io/en/stable/cli/pip_lock/).
 - uv documentation, [Package indexes](https://docs.astral.sh/uv/concepts/indexes/).
+
+## Amendments
+
+- 2026-11-08: what Phase 1 measured. The toolbox drives a `kind` cluster from Git
+  Bash and from WSL, on Windows 11 with Docker Desktop, once its container joins
+  kind's Docker network, so the install script in WSL was not needed
+  ([ADR-0010](0010-how-tests-reach-the-service.md)). Disk was not tight: the
+  `ubuntu-24.04` runner's root filesystem had 145 GB, 86 GB of it free, and a run
+  of the attack suite used about 3 GB, so the 14 GB this record assumed did not
+  hold for the disk the job actually got. Each CI job spends about 35 seconds
+  building the toolbox, whose image is 1.5 GB.
