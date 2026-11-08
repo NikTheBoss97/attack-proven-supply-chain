@@ -45,3 +45,6 @@ ruff format --check .
 
 step "database: the image and its roles"
 test-db
+
+step "service: its tests, in its own image"
+test-app

@@ -1,0 +1,6 @@
+# Author: Nicola Antonello
+# Keep caches and the dependency sources out of the build context.
+**/__pycache__
+**/*.pyc
+.pytest_cache
+*.in
