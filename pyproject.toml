@@ -14,5 +14,11 @@ src = [".", "app"]
 # mode. Review by 2027-05-01.
 ignore = ["EXE002"]
 
+[tool.ruff.lint.per-file-ignores]
+# BLE001 flags `except Exception`. The four runs must turn every exception into
+# the result `error`, never `blocked` (ADR-0007), so here catching all of them
+# is the point. Review by 2027-05-01.
+"attacks/harness/runs.py" = ["BLE001"]
+
 [tool.pytest.ini_options]
 pythonpath = ["."]
