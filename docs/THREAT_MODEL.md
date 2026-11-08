@@ -192,7 +192,7 @@ assumption number.
 
 | ID | Attacker position | Action and impact | STRIDE | Boundary | Priority | Control | Attack | Status |
 | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| T-API-1 | Has their own account and token | Reads or deletes another user's bookmark by its ID | I, T | B6 | High | Ownership check: every query on a bookmark is limited to the caller, `WHERE id = %s AND user_id = %s` (ADR-0006) | none yet | open |
+| T-API-1 | Has their own account and token | Reads or deletes another user's bookmark by its ID | I, T | B6 | High | Ownership check: every query on a bookmark is limited to the caller, `WHERE id = %s AND user_id = %s` (ADR-0006) | [`attacks/bola/`](../attacks/bola/attack.py) | proven: see [the control page](controls/ownership-check.md) |
 | T-API-2 | Has their own account and token | Lists or searches another user's bookmarks | I | B6 | High | The same `user_id` filter on listing, tested by unit tests only and not claimed (ADR-0010) | none yet | open |
 | T-API-3 | Has their own account and token | Puts SQL syntax in the search text to read or change data beyond their own | T, I, E | B6 | High | Parameterized queries with psycopg 3, a search pattern that escapes `%`, `_` and `\`, and a database role with only the table privileges it needs (ADR-0006) | none yet (Phase 4 candidate: SQL injection in search) | open |
 | T-API-4 | Obtained another user's token: from a log, a shared screen or a compromised client | Acts as that user. The token never expires and cannot be revoked | S | B6 | Medium | none: a lost token is replaced by creating a new user (ADR-0006) | none yet | accepted: sessions and revocation are outside the service's scope. Review by 2027-05-01. Owner: Nicola Antonello |

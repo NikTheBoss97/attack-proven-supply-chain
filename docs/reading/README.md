@@ -12,7 +12,7 @@ title, authors, year and link.
 | Topic | What it covers | Entries |
 |---|---|---|
 | [Software supply chain](supply-chain.md) | How dependencies and build tools get attacked, and what stops it. | 8 |
-| [Application security](application-security.md) | The attacks the service has to withstand, and the database features behind its controls. | 10 |
+| [Application security](application-security.md) | The attacks the service has to withstand, and the database features behind its controls. | 11 |
 | [Testing controls](testing-controls.md) | How to show that a test, or a control, really does what it claims. | 5 |
 | [Kubernetes](kubernetes.md) | Running the service in a throwaway cluster, and checking what runs there. | 5 |
 | [Engineering practice](engineering-practice.md) | Continuous integration and recording decisions. | 10 |

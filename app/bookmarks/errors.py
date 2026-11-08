@@ -17,6 +17,11 @@ def invalid_token() -> ApiError:
     return ApiError(401, "invalid_token", {"WWW-Authenticate": "Bearer"})
 
 
+def bookmark_not_found() -> ApiError:
+    """The same 404 for a bookmark that does not exist and for someone else's."""
+    return ApiError(404, "bookmark_not_found")
+
+
 def install(app: FastAPI) -> None:
     """Register the handler that turns an ApiError into its response."""
 

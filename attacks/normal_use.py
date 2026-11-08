@@ -5,8 +5,9 @@ from attacks.harness.api import BookmarksApi
 
 
 def exercise(api: BookmarksApi) -> None:
-    """Create a user, save two bookmarks, list them and find one by its title.
-    Any deviation raises AssertionError with what went wrong."""
+    """Create a user, save two bookmarks, list them, find one by its title, then
+    read it and delete it. Any deviation raises AssertionError with what went
+    wrong."""
     token = api.create_user()
     recipe = api.add_bookmark(token, "https://example.com/1", "A recipe")
     reading = api.add_bookmark(token, "https://example.com/2", "A reading list")
@@ -20,3 +21,13 @@ def exercise(api: BookmarksApi) -> None:
     assert found.status_code == 200, f"searching returned {found.status_code}"
     ids = [bookmark["id"] for bookmark in found.json()]
     assert ids == [recipe["id"]], f"searching by title found {ids}"
+
+    read = api.get_bookmark(token, recipe["id"])
+    assert read.status_code == 200, f"reading by ID returned {read.status_code}"
+    assert read.json() == recipe, "reading by ID returned another bookmark"
+    deleted = api.delete_bookmark(token, recipe["id"])
+    assert deleted.status_code == 204, f"deleting returned {deleted.status_code}"
+    remaining = api.list_bookmarks(token).json()
+    assert [bookmark["id"] for bookmark in remaining] == [reading["id"]], (
+        "the deleted bookmark is still listed"
+    )

@@ -28,6 +28,26 @@ def add_bookmark(conn: psycopg.Connection, user_id: UUID, url: str, title: str) 
     ).fetchone()
 
 
+def get_bookmark(
+    conn: psycopg.Connection, user_id: UUID, bookmark_id: UUID
+) -> dict | None:
+    """The bookmark, only if it belongs to the caller: the ownership check."""
+    return conn.execute(
+        "SELECT id, url, title, created_at FROM app.bookmarks"
+        " WHERE id = %s AND user_id = %s",
+        (bookmark_id, user_id),
+    ).fetchone()
+
+
+def delete_bookmark(conn: psycopg.Connection, user_id: UUID, bookmark_id: UUID) -> bool:
+    """Delete the bookmark, only if it belongs to the caller: the ownership check."""
+    deleted = conn.execute(
+        "DELETE FROM app.bookmarks WHERE id = %s AND user_id = %s",
+        (bookmark_id, user_id),
+    )
+    return deleted.rowcount == 1
+
+
 def like_pattern(text: str) -> str:
     """A pattern for ILIKE ... ESCAPE '\\' that matches text literally, anywhere."""
     escaped = text.replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")

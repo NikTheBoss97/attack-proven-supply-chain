@@ -61,6 +61,23 @@ def save_bookmark(new: NewBookmark, user: CurrentUser, conn: Connection) -> Book
     return Bookmark(**store.add_bookmark(conn, user, new.url, new.title))
 
 
+@app.get("/bookmarks/{bookmark_id}")
+def read_bookmark(bookmark_id: UUID, user: CurrentUser, conn: Connection) -> Bookmark:
+    """One of the caller's bookmarks. Anyone else's gets the same 404 as one that
+    does not exist."""
+    row = store.get_bookmark(conn, user, bookmark_id)
+    if row is None:
+        raise errors.bookmark_not_found()
+    return Bookmark(**row)
+
+
+@app.delete("/bookmarks/{bookmark_id}", status_code=204)
+def delete_bookmark(bookmark_id: UUID, user: CurrentUser, conn: Connection) -> None:
+    """Delete one of the caller's bookmarks, with the same 404 as a read."""
+    if not store.delete_bookmark(conn, user, bookmark_id):
+        raise errors.bookmark_not_found()
+
+
 @app.get("/bookmarks")
 def list_bookmarks(
     user: CurrentUser,
