@@ -54,3 +54,6 @@ step "kubeconform: Kubernetes manifests, strict"
 # kubeconform an empty stream to pass.
 manifests=$(kubectl kustomize deploy)
 printf '%s\n' "$manifests" | kubeconform -strict -summary -kubernetes-version 1.37.0 -
+
+step "attack harness: its own tests, with commands faked"
+pytest attacks/harness/tests
