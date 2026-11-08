@@ -1,0 +1,9 @@
+#!/bin/sh
+# Author: Nicola Antonello
+#
+# Runs the attack suite in a throwaway kind cluster of its own (ADR-0007):
+#   tools/run.sh attacks
+set -eu
+
+cd "$(dirname "$0")/../.."
+exec pytest attacks/test_suite.py
