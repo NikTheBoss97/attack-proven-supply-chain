@@ -33,8 +33,7 @@ def get_bookmark(
 ) -> dict | None:
     """The bookmark, only if it belongs to the caller: the ownership check."""
     return conn.execute(
-        "SELECT id, url, title, created_at FROM app.bookmarks"
-        " WHERE id = %s",
+        "SELECT id, url, title, created_at FROM app.bookmarks WHERE id = %s",
         (bookmark_id,),
     ).fetchone()
 
