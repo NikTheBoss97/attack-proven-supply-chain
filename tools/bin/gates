@@ -48,3 +48,9 @@ test-db
 
 step "service: its tests, in its own image"
 test-app
+
+step "kubeconform: Kubernetes manifests, strict"
+# Rendered first, so a kustomize failure stops the gates instead of leaving
+# kubeconform an empty stream to pass.
+manifests=$(kubectl kustomize deploy)
+printf '%s\n' "$manifests" | kubeconform -strict -summary -kubernetes-version 1.37.0 -

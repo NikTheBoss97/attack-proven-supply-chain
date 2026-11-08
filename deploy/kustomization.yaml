@@ -1,0 +1,8 @@
+# Author: Nicola Antonello
+# The service and its database. No namespace and no image tags here: whoever
+# deploys sets both, as the attack suite's overlay does (ADR-0010).
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - db.yaml
+  - api.yaml

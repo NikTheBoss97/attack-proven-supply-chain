@@ -1,0 +1,86 @@
+# Author: Nicola Antonello
+# PostgreSQL, rebuilt from db/, which creates its schema and roles on first
+# start (ADR-0006). The root filesystem is read-only; the data lives in an
+# emptyDir and dies with the pod, which suits a throwaway cluster (ADR-0010).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: db
+  labels:
+    app: db
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: db
+  template:
+    metadata:
+      labels:
+        app: db
+    spec:
+      automountServiceAccountToken: false
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        seccompProfile:
+          type: RuntimeDefault
+      containers:
+        - name: db
+          image: apsc-db:dev
+          ports:
+            - name: postgres
+              containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: bookmarks
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: postgres-password
+            - name: BOOKMARKS_API_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: api-password
+          # Setup runs on a socket only; TCP answers once the real server is up.
+          readinessProbe:
+            exec:
+              command: ["pg_isready", "-h", "127.0.0.1", "-d", "bookmarks"]
+            periodSeconds: 2
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities:
+              drop: ["ALL"]
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/postgresql
+            - name: socket
+              mountPath: /var/run/postgresql
+            - name: tmp
+              mountPath: /tmp
+      volumes:
+        - name: data
+          emptyDir: {}
+        - name: socket
+          emptyDir: {}
+        - name: tmp
+          emptyDir: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: db
+spec:
+  type: ClusterIP
+  selector:
+    app: db
+  ports:
+    - name: postgres
+      port: 5432
+      targetPort: postgres
