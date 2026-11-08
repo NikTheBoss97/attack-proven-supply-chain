@@ -1,0 +1,7 @@
+# Author: Nicola Antonello
+#
+# The service's runtime packages (ADR-0004, ADR-0006). `tools/run.sh lock`
+# compiles this file into requirements.txt, with a hash for every package.
+fastapi
+psycopg[binary]
+uvicorn

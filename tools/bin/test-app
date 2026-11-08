@@ -1,0 +1,21 @@
+#!/bin/sh
+# Author: Nicola Antonello
+#
+# Tests the service in its own test image, against a fresh database (ADR-0010):
+#   tools/run.sh test-app
+set -eu
+
+if [ "${1:-}" = --next-to-db ]; then
+  # with-db runs this branch with DB_NETWORK, DB_CONTAINER and
+  # BOOKMARKS_API_PASSWORD set. The password reaches the container through the
+  # environment, never the arguments.
+  PGPASSWORD=$BOOKMARKS_API_PASSWORD exec docker run --rm --network "$DB_NETWORK" \
+    --read-only --tmpfs /tmp \
+    --env PGHOST="$DB_CONTAINER" --env PGDATABASE=bookmarks \
+    --env PGUSER=bookmarks_api --env PGPASSWORD \
+    apsc-api:test
+fi
+
+cd "$(dirname "$0")/../.."
+docker build --quiet --target test --tag apsc-api:test app >/dev/null
+exec with-db "$0" --next-to-db

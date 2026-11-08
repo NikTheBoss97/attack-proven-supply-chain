@@ -1,0 +1,7 @@
+# Author: Nicola Antonello
+#
+# What the service's tests add, at the versions the service itself runs with.
+-c requirements.txt
+# Starlette's test client, which deprecates httpx in its favor
+httpx2
+pytest
