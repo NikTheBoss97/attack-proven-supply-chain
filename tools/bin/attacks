@@ -2,8 +2,23 @@
 # Author: Nicola Antonello
 #
 # Runs the attack suite in a throwaway kind cluster of its own (ADR-0007):
-#   tools/run.sh attacks [pytest options, such as --results PATH]
+#   tools/run.sh attacks [--check | --write] [pytest options]
+# --check fails if the README's results table differs from this run's results,
+# and --write rewrites the table from them. Either way, the run decides.
 set -eu
 
 cd "$(dirname "$0")/../.."
-exec python -m pytest -p attacks.harness.results attacks/test_suite.py "$@"
+action=
+case "${1:-}" in
+  --check) action='check' && shift ;;
+  --write) action='write' && shift ;;
+esac
+
+results="$(mktemp -d)/results.json"
+status=0
+python -m pytest -p attacks.harness.results attacks/test_suite.py \
+  --results "$results" "$@" || status=$?
+if [ -n "$action" ]; then
+  python -m attacks.harness.results "$action" README.md "$results" || status=$?
+fi
+exit "$status"
