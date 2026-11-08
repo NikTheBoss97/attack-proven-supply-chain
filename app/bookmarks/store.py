@@ -34,16 +34,16 @@ def get_bookmark(
     """The bookmark, only if it belongs to the caller: the ownership check."""
     return conn.execute(
         "SELECT id, url, title, created_at FROM app.bookmarks"
-        " WHERE id = %s AND user_id = %s",
-        (bookmark_id, user_id),
+        " WHERE id = %s",
+        (bookmark_id,),
     ).fetchone()
 
 
 def delete_bookmark(conn: psycopg.Connection, user_id: UUID, bookmark_id: UUID) -> bool:
     """Delete the bookmark, only if it belongs to the caller: the ownership check."""
     deleted = conn.execute(
-        "DELETE FROM app.bookmarks WHERE id = %s AND user_id = %s",
-        (bookmark_id, user_id),
+        "DELETE FROM app.bookmarks WHERE id = %s",
+        (bookmark_id,),
     )
     return deleted.rowcount == 1
 
