@@ -33,8 +33,8 @@ and CI fails if it differs from CI's own run.
 Normal use with every control on: works.
 <!-- attack-results:end -->
 
-Status: Phase 1 (Foundations) in progress. The first control and its attack run in
-CI.
+Status: Phase 1 (Foundations) complete on 2026-11-08, with its first control proven
+in CI. Phase 2, the pipeline controls, is next.
 
 ## Quickstart
 

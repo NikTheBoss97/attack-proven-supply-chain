@@ -97,3 +97,13 @@ reading and deleting her own bookmark.
 - pytest documentation, [How to use fixtures](https://docs.pytest.org/en/stable/how-to/fixtures.html).
 - kind documentation, [Quick Start](https://kind.sigs.k8s.io/docs/user/quick-start/).
 - Datadog, [Stratus Red Team](https://stratus-red-team.cloud/).
+
+## Amendments
+
+- 2026-11-08: the run time, measured at the end of Phase 1 with one attack. A full
+  run of the suite took about 1 minute 40 seconds on the owner's Windows machine,
+  from Git Bash or WSL, and about 2 minutes 30 seconds as CI's `attacks` job,
+  including 35 seconds to build the toolbox. Before the first attack existed, the
+  suite took about 80 seconds, so creating the cluster and the first stack
+  dominate; the first attack added about 20 seconds, mostly to build and deploy
+  its control-off stack.

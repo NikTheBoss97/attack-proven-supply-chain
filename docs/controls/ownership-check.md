@@ -46,7 +46,21 @@ that the patch no longer applies, the suite fails instead of testing nothing.
 
 ## Evidence
 
-Recorded once the suite runs in CI.
+- On `main`, CI's [`attacks` job](https://github.com/NikTheBoss97/attack-proven-supply-chain/actions/runs/42498639830)
+  ran the four runs and reproduced the README's table: control off `succeeded`,
+  control on `blocked`, variant `blocked`, legitimate `works`.
+- [A pull request that removes the check](https://github.com/NikTheBoss97/attack-proven-supply-chain/pull/8),
+  by applying `control-off.patch` to the real code, failed both required jobs and
+  was closed without merging:
+  - [`gates`](https://github.com/NikTheBoss97/attack-proven-supply-chain/actions/runs/42500125247/job/128790869471):
+    the service's tests `test_another_users_bookmark_looks_missing` and
+    `test_another_user_cannot_delete` failed, the two that check the ownership
+    rule directly.
+  - [`attacks`](https://github.com/NikTheBoss97/attack-proven-supply-chain/actions/runs/42500125247/job/128790869941):
+    control on and the variant reported `succeeded`, since Bob read Alice's
+    bookmark and deleted it, and control off reported `error`, since its patch no
+    longer applied to code that had already lost the check. The table check
+    printed the difference.
 
 ## Known bypasses
 

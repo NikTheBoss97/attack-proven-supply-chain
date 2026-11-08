@@ -8,7 +8,7 @@ Kubernetes, and an automated attack suite proves that each control stops a real
 attack. This document describes the design as it stands. The decisions behind it,
 with the options each one rejected, are in [`docs/adr/`](adr/).
 
-Status: approved by the owner on 2026-11-05. Nothing is built yet.
+Status: approved by the owner on 2026-11-05. Phase 1 complete on 2026-11-08.
 
 ## Goals
 
@@ -246,6 +246,13 @@ Each is made when its phase starts, with options and an ADR:
 | Dependabot security updates for `pip-compile` are unconfirmed: GitHub's table gave conflicting readings | Phase 2 | Rely on the scanners to fail CI on a vulnerable dependency |
 | Falco and Tetragon need kernel BTF support, unconfirmed on GitHub runners and inside `kind` | Phase 5 | Run those attacks locally only, and say so in the README |
 | Keyless signing needs an identity token that forked pull requests do not get (unchecked) | Phase 2 | No effect with one maintainer on branches in the repository itself |
+
+Phase 1 checked its three risks, and none of them failed. The toolbox reaches the
+`kind` cluster from Git Bash and from WSL once it joins kind's Docker network, and
+PostgreSQL runs with a read-only root filesystem given three writable mounts
+([ADR-0010](adr/0010-how-tests-reach-the-service.md)). A CI run of the attack suite
+used about 3 GB of a runner with 86 GB free
+([ADR-0008](adr/0008-repository-ci-and-tooling.md)).
 
 ## Decision records
 
