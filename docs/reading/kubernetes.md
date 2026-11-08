@@ -12,4 +12,5 @@ Running the service in a throwaway cluster, and checking what runs there. Part o
 
 ## Manifests
 
+- Kubernetes, [Pod Security Standards](https://kubernetes.io/docs/concepts/security/pod-security-standards/) (Kubernetes documentation). The three policies, from privileged to restricted, and the pod settings each one requires: a non-root user, no privilege escalation, dropped capabilities and a seccomp profile.
 - kubeconform, [README](https://github.com/yannh/kubeconform) (GitHub). Validating manifests against the Kubernetes schemas, which it downloads by default, and the limits of what schema validation catches.
